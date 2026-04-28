@@ -562,7 +562,7 @@ const AboutPage = ({ navigate }) => (
     <div className="pt-28 md:pt-40 pb-40 px-6 max-w-4xl mx-auto min-h-screen text-center">
       <h2 className="text-3xl md:text-5xl font-black tracking-[0.2em] mb-12 text-[#2D2D2B] text-center uppercase">关于信任圈小院</h2>
       <div className="space-y-12 text-[#4A4A48] font-serif text-lg md:text-2xl font-black text-center text-center text-center">
-        <p className="text-center max-w-2xl mx-auto leading-loose text-center">「信任圈小院」灵感来自帕克·帕尔默关于Circle of Trust的实践。</p>
+        <p className="text-center max-w-2xl mx-auto leading-loose text-center">灵感来自帕克·帕尔默关于Circle of Trust的实践。</p>
         <div className="bg-white p-12 md:p-20 rounded-[56px] border-4 border-[#768C76]/20 shadow-2xl text-center text-center">
           <p className="text-[#2D2D2B] text-xl md:text-3xl mb-12 tracking-widest font-black text-center text-center uppercase">日常微小体验：</p>
           <div className="space-y-8 text-[#768C76] font-black text-center text-center text-center">
