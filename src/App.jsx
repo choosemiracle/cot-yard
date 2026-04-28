@@ -176,7 +176,8 @@ const HubPage = ({ navigate, onMicroStart }) => {
     <PageTransition>
       <div className="pt-28 md:pt-40 pb-32 max-w-6xl mx-auto min-h-screen">
         <header className="mb-12 md:mb-20 text-center px-4">
-          <h2 className="text-3xl md:text-4xl font-black tracking-[0.2em] text-[#2D2D2B] mb-5 text-center">今天，你想如何进入？</h2>
+          <h2 className="text-2xl md:text-3xl font-black tracking-[0.2em] text-[#2D2D2B] mb-5 text-center">今天，你想如何进入？</h2>
+
           <p className="text-[#4A4A48] font-serif text-base md:text-lg tracking-widest leading-relaxed font-black text-center">这里的一切，都是邀请，不是要求。</p>
         </header>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 mb-20 px-2">
