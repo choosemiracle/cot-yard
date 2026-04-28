@@ -175,8 +175,10 @@ const ArrivalPage = ({ navigate, onMicroStart }) => (
     <div className="absolute top-[-5%] right-[-5%] text-[#768C76] opacity-10 pointer-events-none"><Wind size={600} strokeWidth={0.2} /></div>
     <div className="text-center max-w-3xl z-10 space-y-10 md:space-y-14">
       <div className="animate-slow-fade opacity-0 text-center"><p className="text-xs md:text-sm tracking-[0.4em] text-[#8C7A66] font-black uppercase">Circle of Trust · 内在生命的空地</p></div>
-      <div className="animate-slow-fade delay-1s text-center px-2"><h1 className="text-3xl md:text-6xl font-black tracking-[0.1em] text-[#2D2D2B] leading-snug md:leading-tight text-center">「你不需要表现，<br className="md:hidden" />只需要在这里。」</h1></div>
-      <div className="animate-slow-fade delay-2s max-w-md mx-auto text-center px-4"><p className="text-[#4A4A48] text-base md:text-xl font-serif leading-loose tracking-wider font-black text-center">这里是一处数字化的小院，邀请你慢一点，听见自己，也学习如何听见他人。</p></div>
+      <div className="animate-slow-fade delay-1s text-center px-2"><h1 className="text-3xl md:text-6xl font-black tracking-[0.1em] text-[#2D2D2B] leading-snug md:leading-tight text-center">你不需要表现</h1></div>
+      <div className="animate-slow-fade delay-1s text-center px-2"><h1 className="text-3xl md:text-6xl font-black tracking-[0.1em] text-[#2D2D2B] leading-snug md:leading-tight text-center">只需要在这里</h1></div>
+
+      <div className="animate-slow-fade delay-2s max-w-md mx-auto text-center px-4"><p className="text-[#4A4A48] text-base md:text-xl font-serif leading-loose tracking-wider font-black text-center">这里是一处数字化的小院<br/>邀请你慢一点<br/>听见自己 也学习如何听见他人</p></div>
       <div className="animate-slow-fade delay-3s pt-6 flex flex-col md:flex-row gap-5 justify-center items-center">
         <Button onClick={() => navigate('hub')} className="w-full md:min-w-[200px] text-lg py-5 shadow-xl">进入小院</Button>
         <div className="flex gap-4 w-full md:w-auto">
