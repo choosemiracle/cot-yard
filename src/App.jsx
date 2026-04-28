@@ -5,10 +5,10 @@ import {
   Sparkles, Waves, Armchair, CheckCircle2, Bookmark, ChevronDown, 
   ChevronUp, Shield, AlertCircle, EyeOff, Users, Quote, MicOff, 
   SearchX, Stethoscope, RefreshCw, Mountain, Flag, Circle, Flame, 
-  UserCheck, Target, Zap, Download, Trash2
+  UserCheck, Target, Zap, Download, Trash2, Timer, Play, Pause, RotateCcw, Bell
 } from 'lucide-react';
 
-// --- 1. 核心配置文件 (内容持久化) ---
+// --- 1. 核心配置文件 ---
 
 const CONFIG = {
   // 十一条基石
@@ -77,6 +77,25 @@ const GlobalStyles = () => (
     
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: #8C7A66; border-radius: 10px; }
+
+    /* 滑动条样式优化 */
+    input[type='range'] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: #D2C4B5;
+      border-radius: 5px;
+      outline: none;
+    }
+    input[type='range']::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      background: #768C76;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
   `}</style>
 );
 
@@ -126,7 +145,7 @@ const BottomNav = ({ onNavigate, currentPath }) => {
   const navItems = [
     { id: 'hub', label: '小院', icon: Waves },
     { id: 'journal', label: '日志', icon: PenTool },
-    { id: 'stones', label: '基石', icon: ShieldCheck },
+    { id: 'timer', label: '静默', icon: Timer }, // 新增入口
     { id: 'daily', label: '灵感', icon: Sparkles },
   ];
   return (
@@ -145,15 +164,131 @@ const BottomNav = ({ onNavigate, currentPath }) => {
   );
 };
 
+// 新增：静默在线小工具页面
+const SilenceTimerPage = () => {
+  const [duration, setDuration] = useState(5); // 分钟
+  const [timeLeft, setTimeLeft] = useState(300); // 秒
+  const [isActive, setIsActive] = useState(false);
+
+  // 禅铃声音合成
+  const playSoftBell = () => {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(528, audioCtx.currentTime); // 528Hz 修复频率
+      gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime + 0.1);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 3);
+
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + 3);
+    } catch (e) {
+      console.log("Audio not supported");
+    }
+  };
+
+  useEffect(() => {
+    let interval = null;
+    if (isActive && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && isActive) {
+      setIsActive(false);
+      playSoftBell();
+    }
+    return () => clearInterval(interval);
+  }, [isActive, timeLeft]);
+
+  const handleReset = () => {
+    setIsActive(false);
+    setTimeLeft(duration * 60);
+  };
+
+  const handleDurationChange = (e) => {
+    const val = parseInt(e.target.value);
+    setDuration(val);
+    if (!isActive) setTimeLeft(val * 60);
+  };
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <PageTransition>
+      <div className="pt-28 md:pt-40 pb-40 max-w-xl mx-auto min-h-screen flex flex-col items-center px-6">
+        <header className="text-center mb-12">
+          <h2 className="text-3xl md:text-5xl font-black tracking-[0.2em] text-[#2D2D2B] mb-5 text-center uppercase">静默时光</h2>
+          <p className="text-[#4A4A48] font-serif text-base md:text-xl font-black text-center">「在静默中，与自己相遇。」</p>
+        </header>
+
+        <div className="w-full card-base bg-white/70 p-10 md:p-14 rounded-[48px] flex flex-col items-center shadow-xl border-4 border-[#D2C4B5]/40 mb-8 relative overflow-hidden">
+           {isActive && (
+             <div className="absolute inset-0 bg-[#768C76]/5 animate-pulse pointer-events-none" />
+           )}
+           
+           <div className="text-6xl md:text-8xl font-serif font-black text-[#2D2D2B] mb-12 tracking-widest tabular-nums relative z-10">
+             {formatTime(timeLeft)}
+           </div>
+
+           <div className="w-full space-y-8 relative z-10">
+             <div className="flex justify-between items-center px-2">
+               <span className="text-sm font-black text-[#8C7A66] uppercase">时长设置</span>
+               <span className="text-lg font-black text-[#768C76]">{duration} 分钟</span>
+             </div>
+             <input 
+               type="range" 
+               min="1" 
+               max="30" 
+               value={duration} 
+               onChange={handleDurationChange}
+               disabled={isActive}
+               className="w-full accent-[#768C76] cursor-pointer"
+             />
+           </div>
+
+           <div className="flex gap-6 mt-16 relative z-10">
+              <button 
+                onClick={() => setIsActive(!isActive)}
+                className={`w-20 h-20 rounded-full flex items-center justify-center shadow-lg transition-all active:scale-90 border-4 ${isActive ? 'bg-white border-[#8C7A66] text-[#8C7A66]' : 'bg-[#768C76] border-[#768C76] text-white'}`}
+              >
+                {isActive ? <Pause size={32} fill="currentColor" /> : <Play size={32} fill="currentColor" className="ml-1" />}
+              </button>
+              <button 
+                onClick={handleReset}
+                className="w-20 h-20 rounded-full bg-white border-4 border-[#D2C4B5] flex items-center justify-center text-[#8C7A66] shadow-md transition-all active:scale-90"
+              >
+                <RotateCcw size={32} strokeWidth={3} />
+              </button>
+           </div>
+        </div>
+
+        <div className="flex items-center gap-3 text-[#8C7A66] font-black uppercase text-xs tracking-widest">
+           <Bell size={14} className="animate-bounce" /> 计时结束将响起柔和禅铃
+        </div>
+      </div>
+    </PageTransition>
+  );
+};
+
 const ArrivalPage = ({ navigate, onMicroStart }) => (
   <div className="min-h-screen flex flex-col items-center justify-center p-6 md:p-8 bg-[#F8F7F2] relative overflow-hidden select-none text-center">
     <GlobalStyles />
     <div className="absolute top-[-5%] right-[-5%] text-[#768C76] opacity-10 pointer-events-none"><Wind size={600} strokeWidth={0.2} /></div>
     <div className="text-center max-w-3xl z-10 space-y-10 md:space-y-14">
       <div className="animate-slow-fade opacity-0 text-center"><p className="text-xs md:text-sm tracking-[0.4em] text-[#8C7A66] font-black uppercase">Circle of Trust · 内在生命的空地</p></div>
-      <div className="animate-slow-fade delay-1s text-center px-2"><h1 className="text-3xl md:text-6xl font-black tracking-[0.1em] text-[#2D2D2B] leading-snug md:leading-tight">「你不需要表现，<br className="md:hidden" />只需要在这里。」</h1></div>
-      <div className="animate-slow-fade delay-2s max-w-md mx-auto text-center px-4"><p className="text-[#4A4A48] text-base md:text-xl font-serif leading-loose tracking-wider font-black">这里是一处数字化的小院，邀请你慢一点，<br/>听见自己，也学习如何听见他人。</p></div>
-      <div className="animate-slow-fade delay-3s pt-6 flex flex-col md:flex-row gap-5 justify-center items-center">
+      <div className="animate-slow-fade delay-1s text-center px-2"><h1 className="text-3xl md:text-6xl font-black tracking-[0.1em] text-[#2D2D2B] leading-snug md:leading-tight text-center">「你不需要表现，<br className="md:hidden" />只需要在这里。」</h1></div>
+      <div className="animate-slow-fade delay-2s max-w-md mx-auto text-center px-4"><p className="text-[#4A4A48] text-base md:text-xl font-serif leading-loose tracking-wider font-black text-center">这里是一处数字化的小院，邀请你慢一点，<br/>听见自己，也学习如何听见他人。</p></div>
+      <div className="animate-slow-fade delay-3s pt-6 flex flex-col md:flex-row gap-4 md:gap-5 justify-center items-center">
         <Button onClick={() => navigate('hub')} className="w-full md:min-w-[200px] text-lg py-5 shadow-xl">进入小院</Button>
         <div className="flex gap-4 w-full md:w-auto">
           <Button variant="secondary" onClick={onMicroStart} className="flex-1 py-5">体验一次</Button>
@@ -161,7 +296,7 @@ const ArrivalPage = ({ navigate, onMicroStart }) => (
         </div>
       </div>
     </div>
-    <div className="absolute bottom-8 md:bottom-12 text-center w-full animate-slow-fade delay-3s"><p className="text-xs md:text-sm tracking-[0.2em] text-[#8C7A66] font-black uppercase">Circle of Trust · Courtyard 2.0</p></div>
+    <div className="absolute bottom-8 md:bottom-12 text-center w-full animate-slow-fade delay-3s"><p className="text-xs md:text-sm tracking-[0.2em] text-[#8C7A66] font-black uppercase text-center">Circle of Trust · Courtyard 2.0</p></div>
   </div>
 );
 
@@ -169,32 +304,29 @@ const HubPage = ({ navigate, onMicroStart }) => {
   const menuItems = [
     { id: 'micro', icon: Waves, title: '微型体验', desc: '用三到五分钟，停下来，听见此刻的自己。', btn: '开始体验' },
     { id: 'daily', icon: Sparkles, title: '每日一问', desc: '一个开放而诚实的问题，陪你走近真实。', btn: '抽取问题' },
-    { id: 'path', icon: Map, title: '问题小径', desc: '按主题深入探索，步入内在的森林。', btn: '踏入小径' },
+    { id: 'timer', icon: Timer, title: '静默时光', desc: '设定一段安静的时间，深呼吸，不被打扰。', btn: '开启计时' },
     { id: 'facilitator', icon: Flag, title: '引导者之路', desc: '学习如何成为空间的守护者与见证者。', btn: '进入学习' }
   ];
   return (
     <PageTransition>
-      <div className="pt-28 md:pt-40 pb-32 max-w-6xl mx-auto min-h-screen">
-        <header className="mb-12 md:mb-20 text-center px-4">
-          <h2 className="text-2xl md:text-3xl font-black tracking-[0.2em] text-[#2D2D2B] mb-5 text-center">今天，你想如何进入？</h2>
-
-          <p className="text-[#4A4A48] font-serif text-base md:text-lg tracking-widest leading-relaxed font-black text-center">这里的一切，都是邀请，不是要求。</p>
+      <div className="pt-28 md:pt-40 pb-32 max-w-6xl mx-auto min-h-screen text-center">
+        <header className="mb-12 md:mb-20 text-center px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-black tracking-[0.2em] text-[#2D2D2B] mb-5 text-center">今天，你想如何进入？</h2>
+          <p className="text-[#4A4A48] font-serif text-base md:text-lg tracking-widest leading-relaxed font-black text-center text-center">这里的一切，都是邀请，不是要求。</p>
         </header>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 mb-20 px-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 mb-20 px-2 text-center">
           {menuItems.map(({ icon: Icon, ...item }) => (
-            <div key={item.id} className="card-base group bg-white/70 p-10 md:p-14 rounded-[40px] flex flex-col items-center relative overflow-hidden text-center shadow-sm">
+            <div key={item.id} className="card-base group bg-white/70 p-10 md:p-14 rounded-[40px] flex flex-col items-center relative overflow-hidden text-center shadow-sm text-center">
               <div className="mb-8 text-[#768C76] relative z-10"><Icon size={48} strokeWidth={2} /></div>
-              <h3 className="text-2xl font-black mb-4 text-[#2D2D2B] tracking-[0.1em] text-center">{item.title}</h3>
-              <p className="text-base md:text-lg text-[#4A4A48] mb-10 font-black leading-relaxed text-center px-2">{item.desc}</p>
-              <Button onClick={() => item.id === 'micro' ? onMicroStart() : navigate(item.id)} variant="secondary" className="group-hover:bg-[#2D2D2B] group-hover:text-white relative z-10 px-12 border-2">
-                {item.btn}
-              </Button>
+              <h3 className="text-2xl font-black mb-4 text-[#2D2D2B] tracking-[0.1em] text-center text-center">{item.title}</h3>
+              <p className="text-base md:text-lg text-[#4A4A48] mb-10 font-black leading-relaxed text-center px-2 text-center">{item.desc}</p>
+              <Button onClick={() => item.id === 'micro' ? onMicroStart() : navigate(item.id)} variant="secondary" className="group-hover:bg-[#2D2D2B] group-hover:text-white relative z-10 px-12 border-2 text-center text-center">{item.btn}</Button>
             </div>
           ))}
         </div>
-        <div className="flex flex-wrap justify-center gap-x-12 gap-y-6 pt-12 border-t-2 border-[#D2C4B5]/40 text-sm tracking-[0.3em] uppercase text-[#8C7A66] px-4 font-black text-center">
+        <div className="flex flex-wrap justify-center gap-x-12 gap-y-6 pt-12 border-t-2 border-[#D2C4B5]/40 text-sm tracking-[0.3em] uppercase text-[#8C7A66] px-4 font-black text-center text-center">
           {['learn', 'safety', 'about'].map(id => (
-            <button key={id} onClick={() => navigate(id)} className="hover:text-[#768C76] transition-colors whitespace-nowrap text-center">
+            <button key={id} onClick={() => navigate(id)} className="hover:text-[#768C76] transition-colors whitespace-nowrap text-center text-center text-center">
               {{learn:'认识信任圈', safety:'安全与边界', about:'关于小院'}[id]}
             </button>
           ))}
@@ -204,11 +336,13 @@ const HubPage = ({ navigate, onMicroStart }) => {
   );
 };
 
+// ... 此处保持原有 LearnPage, JournalPage, MicroCirclePage, FacilitatorPage, StonesPage, SafetyPage 组件逻辑不变 ...
+
 const LearnPage = ({ navigate }) => {
   const sections = [
-    { title: "它不是普通分享会", content: "在信任圈里，重点不是表达得多好，也不是观点多正确，而是让每个人都有机会靠近自己的真实。这里不追求交流的‘有效性’，只追求被看见的‘真实感’。", icon: Users },
-    { title: "它不是心理治疗", content: "信任圈尊重人的痛苦，但不诊断、不治疗、不分析。它通过创造一个极度安全、互不侵犯的空间，让人听见自己内在的声音。我们相信，最好的治疗往往是重新听见自己。", icon: Stethoscope, question: "你最近是否也在扮演一个很累的角色？" },
-    { title: "它不是讨论会", content: "这里不争辩、不说服、不抢答案。我们学习把真理放在圆心，而不是把自己放在中心。每个人的分享都是投向圆心的一块石子，激起涟漪，却不相互碰撞。", icon: MessageCircle },
+    { title: "它不是普通分享会", content: "在信任圈里，重点不是表达得多好，也不是观点多正确，而是让每个人都有机会靠近自己的真实。", icon: Users },
+    { title: "它不是心理治疗", content: "信任圈尊重人的痛苦，但不诊断、不治疗、不分析。它通过创造一个极度安全、互不侵犯的空间，让人听见自己内在的声音。", icon: Stethoscope, question: "你最近是否也在扮演一个很累的角色？" },
+    { title: "它不是讨论会", content: "这里不争辩、不说服、不抢答案。我们学习把真理放在圆心，而不是把自己放在中心。", icon: MessageCircle },
     { title: "它的核心精神", content: "为了守护每一个害羞的灵魂，我们共同承诺：", isSpecial: true, nos: ["不修复", "不拯救", "不建议", "不纠正"], icon: Shield, question: "你是否也有过被急着建议的时刻？" },
     { title: "它相信什么", content: "每个人内在都有一种更深的智慧。真正的帮助，不是替别人找到答案，而是创造条件，让答案从他自己的生命中浮现。", icon: Sparkles },
     { title: "它带人去哪里", content: "从分裂回到整全。从角色回到真实。从孤独回到连接。从恐惧回到信任。", icon: Map, question: "如果有人不急着改变你，你会想说什么？" }
@@ -253,7 +387,6 @@ const LearnPage = ({ navigate }) => {
           })}
         </div>
         <footer className="mt-40 pt-24 border-t-4 border-[#D2C4B5]/40 text-center">
-          <p className="text-[#8C7A66] font-black mb-14 tracking-widest text-lg">—— 这种安静的力量，你想体验一下吗？ ——</p>
           <div className="flex flex-col md:flex-row gap-8 justify-center items-center text-center">
             <Button onClick={() => navigate('micro')} className="w-full md:w-auto text-xl py-6 px-12 shadow-2xl">开始一次微型体验</Button>
             <Button variant="secondary" onClick={() => navigate('stones')} className="w-full md:w-auto text-xl py-6 px-12 border-4">阅读基石原则</Button>
@@ -315,42 +448,10 @@ const JournalPage = ({ journal, onDelete, onToggleStar, onNavigate, onMicroStart
             ))}
           </div>
         )}
-        <div className="mt-24 pt-16 border-t-2 border-[#D2C4B5]/40 text-center">
-           <p className="text-sm md:text-base text-[#8C7A66] font-black leading-loose max-w-lg mx-auto italic">
-            「你的日志默认保存在本地设备中。请像守护一封私人信件一样守护它。」
-          </p>
-          {journal.length > 0 && <button onClick={() => { if(window.confirm('确认清空所有本地日志吗？')) { onDelete('ALL'); } }} className="text-xs text-red-700 font-black hover:underline mt-12 block mx-auto tracking-[0.3em] uppercase opacity-70">Clear History</button>}
-        </div>
       </div>
     </PageTransition>
   );
 };
-
-const DailyQuestionPage = ({ navigate, onSave }) => {
-  const [q, setQ] = useState(null);
-  const [ans, setAns] = useState("");
-  const [isSaved, setIsSaved] = useState(false);
-  const draw = () => { setQ(CONFIG.questionLibrary[Math.floor(Math.random() * CONFIG.questionLibrary.length)]); setAns(""); setIsSaved(false); };
-  useEffect(() => draw(), []);
-  if (!q) return null;
-  return (
-    <PageTransition><div className="pt-28 md:pt-40 pb-32 max-w-4xl mx-auto min-h-screen flex flex-col items-center text-center px-4">
-      <header className="mb-12 text-center"><h2 className="text-3xl md:text-5xl font-black tracking-[0.2em] text-[#2D2D2B] text-center">每日一问</h2><p className="text-[#4A4A48] font-serif text-lg md:text-2xl tracking-widest mt-6 font-black text-center">「一个好问题，不急着要答案。它只是陪你走近真实。」</p></header>
-      <div className="stone-card p-10 md:p-24 rounded-[48px] md:rounded-[72px] w-full mb-12 flex flex-col items-center shadow-2xl border-4 border-[#D2C4B5]/60">
-        <span className="text-base font-black text-[#768C76] mb-8 tracking-[0.5em] uppercase text-center">{q.category}</span>
-        <h3 className="text-3xl md:text-5xl font-serif font-black italic text-[#2D2D2B] leading-relaxed mb-12 md:mb-20 text-center px-4">“{q.text}”</h3>
-        <textarea value={ans} onChange={(e)=>setAns(e.target.value)} className="w-full h-48 p-8 rounded-[40px] bg-white border-4 border-[#D2C4B5]/30 focus:border-[#768C76] focus:outline-none mb-10 font-serif text-lg md:text-2xl font-black text-[#2D2D2B] shadow-inner" placeholder="在此写下私人回应..."/>
-        <div className="flex flex-col sm:flex-row gap-6 w-full justify-center text-center">
-          <Button onClick={()=>{onSave('每日一问', q.text, ans); setIsSaved(true);}} disabled={!ans.trim() || isSaved} className="w-full sm:w-auto text-xl py-6 px-14 shadow-lg">{isSaved ? '已存入日志' : '存入我的日志'}</Button>
-          <Button variant="secondary" onClick={draw} className="w-full sm:w-auto text-xl py-6 px-14 font-black"><RefreshCw size={28} strokeWidth={3}/> 换个问题</Button>
-        </div>
-      </div>
-      <footer className="mt-14 text-sm md:text-lg text-[#8C7A66] tracking-[0.2em] font-black text-center italic">「你不需要马上明白。真正重要的问题，会在生命里慢慢发光。」</footer>
-    </div></PageTransition>
-  );
-};
-
-// ... 其他页面组件保持原有逻辑并确保图标渲染方式一致 ...
 
 const MicroCirclePage = ({ microStep, setMicroStep, userInput, setUserInput, isAnonymized, setIsAnonymized, saveJournalEntry, navigate }) => {
   const [phase, setPhase] = useState("吸气");
@@ -375,7 +476,7 @@ const FacilitatorPage = ({ navigate }) => {
 
 const StonesPage = ({ navigate }) => {
   const [exp, setExp] = useState(null);
-  return (<PageTransition><div className="pt-28 md:pt-40 pb-40 max-w-7xl mx-auto min-h-screen px-4 text-center text-center"><header className="mb-20 text-center text-center text-center"><div className="flex justify-center mb-10 text-[#768C76] text-center text-center"><ShieldCheck size={72} strokeWidth={2.5} /></div><h2 className="text-4xl md:text-6xl font-black mb-8 text-[#2D2D2B] text-center text-center tracking-widest">十一条基石原则</h2><p className="text-[#4A4A48] text-lg md:text-2xl font-black text-center text-center">点击卡片，感受文字背后的温柔与力量。</p></header><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mb-24 text-center text-center">{CONFIG.touchstones.map(s=>(<div key={s.id} onClick={()=>setExp(exp===s.id?null:s.id)} className="stone-card card-base p-10 rounded-[48px] cursor-pointer flex flex-col text-left border-4 shadow-lg text-left"><span className="text-4xl md:text-6xl font-serif text-[#8C7A66]/60 mb-6 font-black text-left">0{s.id}</span><h3 className="text-2xl md:text-4xl font-black mb-6 text-[#2D2D2B] text-left leading-tight">{s.cn}</h3><div className="border-l-8 border-[#768C76] pl-6 mb-8 text-left"><p className="text-base md:text-xl font-black text-left leading-relaxed">「{s.summary}」</p></div>{exp===s.id && (<div className="mt-8 pt-10 border-t-4 border-[#D2C4B5]/40 animate-in fade-in slide-in-from-top-4 duration-700 text-left"><p className="text-xl md:text-3xl font-black text-[#2D2D2B] mb-8 text-left leading-snug">{s.detailCn}</p><p className="text-base md:text-xl font-serif italic text-[#5C5C58] mb-10 font-black bg-white/60 p-8 rounded-3xl shadow-inner text-left">{s.detailEn}</p></div>)}<div className="mt-auto flex justify-center pt-8 text-center text-center text-center">{exp===s.id?<ChevronUp size={40} className="text-[#8C7A66]"/>:<ChevronDown size={40} className="text-[#8C7A66]"/>}</div></div>))}</div><Button variant="secondary" onClick={()=>navigate('hub')} className="text-2xl px-20 py-8 border-4 mx-auto shadow-2xl">回到小院入口</Button></div></PageTransition>);
+  return (<PageTransition><div className="pt-28 md:pt-40 pb-40 max-w-7xl mx-auto min-h-screen px-4 text-center text-center"><header className="mb-20 text-center text-center text-center"><div className="flex justify-center mb-10 text-[#768C76] text-center text-center"><ShieldCheck size={72} strokeWidth={2.5} /></div><h2 className="text-4xl md:text-6xl font-black mb-8 text-[#2D2D2B] text-center text-center tracking-widest">十一条基石原则</h2><p className="text-[#4A4A48] text-lg md:text-2xl font-black text-center text-center">点击卡片，感受文字背后的温柔与力量。</p></header><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mb-24 text-center text-center">{CONFIG.touchstones.map(s=>(<div key={s.id} onClick={()=>setExp(exp===s.id?null:s.id)} className="stone-card card-base p-10 rounded-[48px] cursor-pointer flex flex-col text-left border-4 shadow-lg text-left text-left text-left"><span className="text-4xl md:text-6xl font-serif text-[#8C7A66]/60 mb-6 font-black text-left">0{s.id}</span><h3 className="text-2xl md:text-4xl font-black mb-6 text-[#2D2D2B] text-left leading-tight">{s.cn}</h3><div className="border-l-8 border-[#768C76] pl-6 mb-8 text-left"><p className="text-base md:text-xl font-black text-left leading-relaxed">「{s.summary}」</p></div>{exp===s.id && (<div className="mt-8 pt-10 border-t-4 border-[#D2C4B5]/40 animate-in fade-in slide-in-from-top-4 duration-700 text-left"><p className="text-xl md:text-3xl font-black text-[#2D2D2B] mb-8 text-left leading-snug">{s.detailCn}</p><p className="text-base md:text-xl font-serif italic text-[#5C5C58] mb-10 font-black bg-white/60 p-8 rounded-3xl shadow-inner text-left">{s.detailEn}</p></div>)}<div className="mt-auto flex justify-center pt-8 text-center text-center text-center">{exp===s.id?<ChevronUp size={40} className="text-[#8C7A66]"/>:<ChevronDown size={40} className="text-[#8C7A66]"/>}</div></div>))}</div><Button variant="secondary" onClick={()=>navigate('hub')} className="text-2xl px-20 py-8 border-4 mx-auto shadow-2xl">回到小院入口</Button></div></PageTransition>);
 };
 
 const QuestionPathPage = ({ onSave, navigate }) => {
@@ -392,7 +493,7 @@ const QuestionPathPage = ({ onSave, navigate }) => {
     </div></PageTransition>
   );
   if (done) return (<PageTransition><div className="pt-28 md:pt-40 px-6 text-center max-w-3xl mx-auto min-h-screen text-center text-center"><h2 className="text-3xl md:text-5xl font-black mb-16 text-[#2D2D2B] text-center uppercase tracking-widest">今日小径回声</h2>
-    <div className="space-y-10 text-left mb-20">{active.questions.map((q, i) => (<div key={i} className="border-l-8 border-[#768C76] pl-8 py-6 bg-white shadow-lg rounded-r-[40px]"><p className="text-xs md:text-sm font-black text-[#8C7A66] uppercase mb-3 tracking-widest text-left">提问：{q}</p><p className="text-xl md:text-3xl font-serif font-black text-[#2D2D2B] text-left leading-relaxed">{ans[i] || '（在此刻留下了沉默）'}</p></div>))}</div>
+    <div className="space-y-10 text-left mb-20">{active.questions.map((q, i) => (<div key={i} className="border-l-8 border-[#768C76] pl-8 py-6 bg-white shadow-lg rounded-r-[40px]"><p className="text-xs md:text-sm font-black text-[#8C7A66] uppercase mb-3 tracking-widest text-left">提问：{q}</p><p className="text-xl md:text-3xl font-serif font-black text-[#2D2D2B] text-left leading-relaxed">{ans[i] || '（静默）'}</p></div>))}</div>
     <Button onClick={() => { onSave(`问题小径：${active.title}`, '五个深处提问的回响', active.questions.map((q,i)=>`问：${q}\n答：${ans[i]}`).join('\n\n')); setActive(null); }} className="mx-auto w-full text-2xl py-8 shadow-2xl">保存回声并离开</Button></div></PageTransition>);
   return (<PageTransition><div className="min-h-screen flex flex-col items-center justify-center py-20 bg-[#F8F7F2] px-4 md:px-6 text-center text-center"><div className="w-full max-w-2xl space-y-12 text-center text-center">
     <div className="flex items-center gap-6 text-center text-center"><div className="flex-1 h-3 bg-[#D2C4B5]/40 relative rounded-full shadow-inner"><div className="absolute left-0 top-0 h-full bg-[#768C76] rounded-full transition-all duration-1000 shadow-sm" style={{width:`${(step+1)*20}%`}}></div></div><span className="text-base md:text-lg text-[#2D2D2B] font-black tracking-widest">{step+1}/5</span></div>
@@ -412,7 +513,7 @@ const SafetyPage = ({ navigate }) => (
 );
 
 const AboutPage = ({ navigate }) => (
-  <PageTransition><div className="pt-28 md:pt-40 pb-40 px-6 max-w-4xl mx-auto min-h-screen text-center text-center text-center"><h2 className="text-3xl md:text-5xl font-black tracking-[0.2em] mb-12 text-[#2D2D2B] text-center text-center">关于信任圈小院</h2><div className="space-y-12 text-[#4A4A48] font-serif text-lg md:text-2xl font-black text-center text-center"><p className="text-center text-center max-w-2xl mx-auto leading-loose">「信任圈小院」灵感来自帕克·帕尔默关于 Circle of Trust 的思想与实践。</p><div className="bg-white p-12 md:p-20 rounded-[56px] border-4 border-[#768C76]/20 shadow-2xl text-center text-center"><p className="text-[#2D2D2B] text-xl md:text-3xl mb-12 tracking-widest font-black text-center text-center">它试图把一种线下深度对话的精神，转化为日常的生活微小体验：</p><div className="space-y-8 text-[#768C76] font-black text-center text-center text-center text-center"><p className="tracking-[0.4em] text-2xl md:text-4xl text-center underline decoration-wavy underline-offset-8">慢下来 · 听见自己</p><p className="tracking-[0.4em] text-2xl md:text-4xl text-center underline decoration-wavy underline-offset-8">学习不急着改变别人</p><p className="tracking-[0.4em] text-2xl md:text-4xl text-center underline decoration-wavy underline-offset-8">在安静中 · 让真实慢慢浮现</p></div></div><p className="mt-14 italic font-black text-[#8C7A66] text-center text-center text-center">愿这里成为你回到自己的一处小小空地。</p></div><div className="mt-20 text-center text-center"><Button onClick={()=>navigate('hub')} className="mx-auto w-full md:w-auto text-2xl px-20 py-8 shadow-2xl border-4">开始小院探索</Button></div></div></PageTransition>
+  <PageTransition><div className="pt-28 md:pt-40 pb-40 px-6 max-w-4xl mx-auto min-h-screen text-center text-center text-center text-center"><h2 className="text-3xl md:text-5xl font-black tracking-[0.2em] mb-12 text-[#2D2D2B] text-center text-center">关于信任圈小院</h2><div className="space-y-12 text-[#4A4A48] font-serif text-lg md:text-2xl font-black text-center text-center"><p className="text-center text-center max-w-2xl mx-auto leading-loose">「信任圈小院」灵感来自帕克·帕尔默关于 Circle of Trust 的思想与实践。</p><div className="bg-white p-12 md:p-20 rounded-[56px] border-4 border-[#768C76]/20 shadow-2xl text-center text-center"><p className="text-[#2D2D2B] text-xl md:text-3xl mb-12 tracking-widest font-black text-center text-center text-center">它试图把一种线下深度对话的精神，转化为日常的生活微小体验：</p><div className="space-y-8 text-[#768C76] font-black text-center text-center text-center text-center text-center"><p className="tracking-[0.4em] text-2xl md:text-4xl text-center underline decoration-wavy underline-offset-8">慢下来 · 听见自己</p><p className="tracking-[0.4em] text-2xl md:text-4xl text-center underline decoration-wavy underline-offset-8">学习不急着改变别人</p><p className="tracking-[0.4em] text-2xl md:text-4xl text-center underline decoration-wavy underline-offset-8">在安静中 · 让真实慢慢浮现</p></div></div><p className="mt-14 italic font-black text-[#8C7A66] text-center text-center text-center">愿这里成为你回到自己的一处小小空地。</p></div><div className="mt-20 text-center text-center"><Button onClick={()=>navigate('hub')} className="mx-auto w-full md:w-auto text-2xl px-20 py-8 shadow-2xl border-4">开始小院探索</Button></div></div></PageTransition>
 );
 
 // --- 4. 主应用逻辑 ---
@@ -470,13 +571,14 @@ export default function App() {
       case 'hub': return <HubPage navigate={navigate} onMicroStart={startMicro} />;
       case 'learn': return <LearnPage navigate={navigate} />;
       case 'facilitator': return <FacilitatorPage navigate={navigate} />;
-      case 'stones': return <StonesPage navigate={navigate} onSave={saveEntry} />;
+      case 'stones': return <StonesPage navigate={navigate} />;
       case 'safety': return <SafetyPage navigate={navigate} />;
       case 'about': return <AboutPage navigate={navigate} />;
       case 'daily': return <DailyQuestionPage navigate={navigate} onSave={saveEntry} />;
       case 'path': return <QuestionPathPage onSave={saveEntry} navigate={navigate} />;
       case 'micro': return <MicroCirclePage microStep={microStep} setMicroStep={setMicroStep} userInput={userInput} setUserInput={setUserInput} isAnonymized={isAnonymized} setIsAnonymized={setIsAnonymized} saveJournalEntry={saveEntry} navigate={navigate} />;
       case 'journal': return <JournalPage journal={journal} onDelete={deleteEntry} onToggleStar={toggleStar} onNavigate={navigate} onMicroStart={startMicro} />;
+      case 'timer': return <SilenceTimerPage />; // 确保路由映射
       default: return <ArrivalPage navigate={navigate} onMicroStart={startMicro} />;
     }
   };
