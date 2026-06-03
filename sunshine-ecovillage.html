@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三生谷生态村 - Sunshine Ecovillage</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        eco: {
+                            50: '#f2f8f5',
+                            100: '#e0f0e6',
+                            200: '#c2dfce',
+                            300: '#99c7ab',
+                            400: '#6ca884',
+                            500: '#4a8c66',
+                            600: '#376f50',
+                            700: '#2d5941',
+                            800: '#254735',
+                            900: '#1f3a2c',
+                        },
+                        earth: {
+                            500: '#d97706',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"PingFang SC"', '"Microsoft YaHei"', 'sans-serif'],
+                        serif: ['"Songti SC"', '"SimSun"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .bg-hero-pattern {
+            background-image: linear-gradient(rgba(31, 58, 44, 0.6), rgba(31, 58, 44, 0.6)), url('https://images.unsplash.com/photo-1505993597083-3bd19fd75812?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        /* Smooth language transition */
+        [data-zh] {
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-800 bg-eco-50 antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-300 bg-white/90 backdrop-blur-md shadow-sm" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-3">
+                    <div class="w-10 h-10 bg-eco-600 rounded-full flex items-center justify-center text-white">
+                        <i class="fa-solid fa-leaf text-xl"></i>
+                    </div>
+                    <a href="#" class="font-bold text-2xl text-eco-800 tracking-wider" data-zh="三生谷" data-en="Sunshine">三生谷</a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-6 lg:space-x-8 items-center">
+                    <a href="#home" class="text-gray-600 hover:text-eco-600 transition font-medium" data-zh="首页" data-en="Home">首页</a>
+                    <a href="#about" class="text-gray-600 hover:text-eco-600 transition font-medium" data-zh="关于我们" data-en="About Us">关于我们</a>
+                    <a href="#philosophy" class="text-gray-600 hover:text-eco-600 transition font-medium" data-zh="生态理念" data-en="Philosophy">生态理念</a>
+                    <a href="#community" class="text-gray-600 hover:text-eco-600 transition font-medium" data-zh="社群经济" data-en="Community">社群经济</a>
+                    <a href="#academy" class="text-gray-600 hover:text-eco-600 transition font-medium" data-zh="教育体系" data-en="Education">教育体系</a>
+                    <a href="#wwoof" class="text-gray-600 hover:text-eco-600 transition font-medium" data-zh="义工体验" data-en="WWOOF">义工体验</a>
+                    
+                    <!-- Language Toggle Desktop -->
+                    <button onclick="toggleLanguage()" class="lang-toggle-btn text-eco-700 font-bold border-2 border-eco-600 rounded-full px-3 py-1 hover:bg-eco-600 hover:text-white transition text-sm">EN</button>
+                    
+                    <a href="#contact" class="px-5 py-2 bg-eco-600 text-white rounded-full hover:bg-eco-700 transition shadow-md whitespace-nowrap" data-zh="联系我们" data-en="Contact">联系我们</a>
+                </div>
+
+                <!-- Mobile Menu Button & Lang Toggle -->
+                <div class="md:hidden flex items-center gap-4">
+                    <button onclick="toggleLanguage()" class="lang-toggle-btn text-eco-700 font-bold border-2 border-eco-600 rounded-full px-3 py-1 text-sm">EN</button>
+                    <button id="mobile-menu-btn" class="text-gray-600 hover:text-eco-600 focus:outline-none">
+                        <i class="fa-solid fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-lg absolute w-full max-h-screen overflow-y-auto">
+            <div class="px-4 pt-2 pb-6 space-y-2">
+                <a href="#home" class="block px-3 py-2 text-gray-600 hover:text-eco-600 hover:bg-eco-50 rounded-md font-medium" data-zh="首页" data-en="Home">首页</a>
+                <a href="#about" class="block px-3 py-2 text-gray-600 hover:text-eco-600 hover:bg-eco-50 rounded-md font-medium" data-zh="关于我们" data-en="About Us">关于我们</a>
+                <a href="#philosophy" class="block px-3 py-2 text-gray-600 hover:text-eco-600 hover:bg-eco-50 rounded-md font-medium" data-zh="生态理念" data-en="Philosophy">生态理念</a>
+                <a href="#community" class="block px-3 py-2 text-gray-600 hover:text-eco-600 hover:bg-eco-50 rounded-md font-medium" data-zh="社群经济" data-en="Community">社群经济</a>
+                <a href="#academy" class="block px-3 py-2 text-gray-600 hover:text-eco-600 hover:bg-eco-50 rounded-md font-medium" data-zh="教育体系" data-en="Education">教育体系</a>
+                <a href="#wwoof" class="block px-3 py-2 text-gray-600 hover:text-eco-600 hover:bg-eco-50 rounded-md font-medium" data-zh="义工体验" data-en="WWOOF">义工体验</a>
+                <a href="#contact" class="block px-3 py-2 text-eco-600 font-bold hover:bg-eco-50 rounded-md" data-zh="联系我们" data-en="Contact">联系我们</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center bg-hero-pattern pt-20">
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent to-eco-900/50"></div>
+        <div class="relative z-10 text-center px-4 max-w-4xl mx-auto fade-in-up">
+            <div class="inline-block px-4 py-1 bg-white/20 backdrop-blur-sm text-white rounded-full text-sm font-bold tracking-widest mb-6 border border-white/40" data-zh="联合国教科文组织合作伙伴" data-en="UNESCO Partner">联合国教科文组织合作伙伴</div>
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 drop-shadow-lg font-serif" 
+                data-zh="用一辈子，陪伴一座村庄<br class='hidden md:block'/>野蛮生长" 
+                data-en="Accompany a village to grow wild<br class='hidden md:block'/>for a lifetime">
+                用一辈子，陪伴一座村庄<br class="hidden md:block"/>野蛮生长
+            </h1>
+            <p class="text-lg md:text-2xl text-gray-100 mb-10 drop-shadow-md max-w-3xl mx-auto" 
+               data-zh="致力于中国生态村发展和可持续发展教育(ESD)。在95%森林覆盖的千层梯田间，构建三生万物的理想家园。" 
+               data-en="Dedicated to China's ecovillage development and ESD. Building an ideal home amidst 95% forest cover and thousand-layer terraces.">
+                致力于中国生态村发展和可持续发展教育(ESD)。在95%森林覆盖的千层梯田间，构建三生万物的理想家园。
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#about" class="px-8 py-3 bg-white text-eco-700 font-bold rounded-full hover:bg-gray-100 transition shadow-lg" data-zh="探索三生谷" data-en="Explore Sunshine">探索三生谷</a>
+                <a href="#academy" class="px-8 py-3 border-2 border-white text-white font-bold rounded-full hover:bg-white hover:text-eco-700 transition shadow-lg" data-zh="了解教育体系" data-en="Discover Education">了解教育体系</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+                <div class="lg:w-1/2">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="" class="rounded-2xl shadow-xl w-full h-auto object-cover aspect-video">
+                        <div class="absolute -bottom-6 -right-6 bg-eco-600 text-white p-6 rounded-2xl shadow-lg hidden md:block">
+                            <p class="text-3xl font-bold font-serif mb-1">95%</p>
+                            <p class="text-sm opacity-90" data-zh="森林覆盖率" data-en="Forest Coverage">森林覆盖率</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-1/2 space-y-6">
+                    <div class="inline-block px-4 py-1 bg-eco-100 text-eco-700 rounded-full text-sm font-bold tracking-wide" data-zh="关于我们" data-en="About Us">关于我们</div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 font-serif" data-zh="复兴空心村，重塑共同体" data-en="Reviving the Hollow Village">复兴空心村，重塑共同体</h2>
+                    <p class="text-gray-600 leading-relaxed text-lg" 
+                       data-zh="胥岭·三生谷生态村成立于2015年，位于海拔400米、距离杭州市区约1.5小时车程的建德市乾潭镇胥岭古村。团队入驻时，这里是一个仅剩约60位留守老人的“空心村”。" 
+                       data-en="Founded in 2015, Sunshine Ecovillage is located in Xuling ancient village, Jiande, Hangzhou (alt 400m). When our team arrived, it was a 'hollow village' with only about 60 elderly left.">
+                        胥岭·三生谷生态村成立于2015年，位于海拔400米、距离杭州市区约1.5小时车程的建德市乾潭镇胥岭古村。团队入驻时，这里是一个仅剩约60位留守老人的“空心村”。
+                    </p>
+                    <p class="text-gray-600 leading-relaxed text-lg" 
+                       data-zh="发起人汪海潮（前世界500强管理岗、连续创业者）与联合创始人王雨（美学与社群文化营造者），通过整全设计，将乡村振兴与生态文明结合。我们是中国首个以村落为载体加入全球生态村联盟（GEN）的单位，致力于打造一个安静、健康、互助的生活共同体。" 
+                       data-en="Founders Wang Haichao and Wang Yu combine rural revitalization with ecological civilization through holistic design. We are the first Chinese village to join GEN, aiming to create a peaceful, healthy community.">
+                        发起人汪海潮（前世界500强管理岗、连续创业者）与联合创始人王雨（美学与社群文化营造者），通过整全设计，将乡村振兴与生态文明结合。我们是中国首个以村落为载体加入全球生态村联盟（GEN）的单位，致力于打造一个安静、健康、互助的生活共同体。
+                    </p>
+                    <div class="bg-eco-50 p-4 rounded-xl border-l-4 border-eco-500 mt-4">
+                        <p class="text-eco-800 font-medium" data-zh="名字溯源：“三生”取自《道德经》的三生万物，在这里代表着生活、生态、生命的深度融合。" data-en="Name Origin: 'San Sheng' comes from the Tao Te Ching, representing the deep integration of Life (Living), Ecology, and Life (Spirit).">
+                            名字溯源：“三生”取自《道德经》的三生万物，在这里代表着生活、生态、生命的深度融合。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Philosophy Section -->
+    <section id="philosophy" class="py-20 bg-eco-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <div class="inline-block px-4 py-1 bg-eco-100 text-eco-700 rounded-full text-sm font-bold tracking-wide mb-4" data-zh="广义生态" data-en="Broad Ecology">广义生态</div>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 font-serif" data-zh="三生万物：不可分割的三个圈层" data-en="Three Inseparable Circles">三生万物：不可分割的三个圈层</h2>
+                <p class="mt-4 text-gray-600 max-w-2xl mx-auto" 
+                   data-zh="在三生谷，我们认为生态是广义的。这三个维度从内到外，构建了我们可持续发展的理想家园。" 
+                   data-en="At Sunshine Ecovillage, ecology is broad. These three dimensions build our ideal home for sustainable development from the inside out.">
+                    在三生谷，我们认为生态是广义的。这三个维度从内到外，构建了我们可持续发展的理想家园。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Circle 1: 生命 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 text-center border-t-4 border-eco-400 group">
+                    <div class="w-16 h-16 bg-eco-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-seedling text-2xl text-eco-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3" data-zh="生命 (人与自己)" data-en="Spirit (Self)">生命 (人与自己)</h3>
+                    <p class="text-gray-600" 
+                       data-zh="向内探索，关注身心健康、有机饮食。寻找内在的存在感与内心的宁静，这是生态圈的最核心，即人与自己的和谐。" 
+                       data-en="Inward exploration, focusing on physical/mental health and organic diet. Finding inner peace is the core of the ecosystem: harmony with oneself.">
+                        向内探索，关注身心健康、有机饮食。寻找内在的存在感与内心的宁静，这是生态圈的最核心，即人与自己的和谐。
+                    </p>
+                </div>
+                <!-- Circle 2: 生活 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 text-center border-t-4 border-eco-500 group">
+                    <div class="w-16 h-16 bg-eco-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-users text-2xl text-eco-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3" data-zh="生活 (人与人)" data-en="Living (People)">生活 (人与人)</h3>
+                    <p class="text-gray-600" 
+                       data-zh="建立生活共同体，倡导互助、协作与非暴力沟通。用道德而非法律约束，构建一个去中心化、安静健康的社群环境。" 
+                       data-en="Building a living community, advocating mutual aid and non-violent communication. Fostering a decentralized, healthy community environment.">
+                        建立生活共同体，倡导互助、协作与非暴力沟通。用道德而非法律约束，构建一个去中心化、安静健康的社群环境。
+                    </p>
+                </div>
+                <!-- Circle 3: 生态 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 text-center border-t-4 border-eco-600 group">
+                    <div class="w-16 h-16 bg-eco-100 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-earth-asia text-2xl text-eco-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3" data-zh="生态 (人与自然)" data-en="Ecology (Nature)">生态 (人与自然)</h3>
+                    <p class="text-gray-600" 
+                       data-zh="践行永续农业和自然农法，探索气候变暖的应对方案，保护地球母亲这个宏大的生态系统，实现人与自然的和谐。" 
+                       data-en="Practicing Permaculture and natural farming, exploring solutions to climate change, and protecting Mother Earth to achieve harmony with nature.">
+                        践行永续农业和自然农法，探索气候变暖的应对方案，保护地球母亲这个宏大的生态系统，实现人与自然的和谐。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community & Economy Section (New) -->
+    <section id="community" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col-reverse lg:flex-row items-center gap-12">
+                <div class="lg:w-1/2 space-y-6">
+                    <div class="inline-block px-4 py-1 bg-earth-500/10 text-earth-500 rounded-full text-sm font-bold tracking-wide" data-zh="社群与经济" data-en="Community & Economy">社群与经济</div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 font-serif" data-zh="青色组织与公平贸易闭环" data-en="Teal Organization & Fair Trade">青色组织与公平贸易闭环</h2>
+                    <p class="text-gray-600 leading-relaxed text-lg" 
+                       data-zh="我们践行“青色组织”管理模式，去中心化、无等级层级。目前，来自五湖四海的约60-70名新村民长期居住在此，与约60位老村民共同构成了生态社群。" 
+                       data-en="We practice a decentralized 'Teal Organization' model. Currently, 60-70 new villagers from all over live alongside 60 local elderly, forming our eco-community.">
+                        我们践行“青色组织”管理模式，去中心化、无等级层级。目前，来自五湖四海的约60-70名新村民长期居住在此，与约60位老村民共同构成了生态社群。
+                    </p>
+                    <p class="text-gray-600 leading-relaxed text-lg" 
+                       data-zh="在经济模型上，我们不以政府拨款或大企业投资为主要支撑，而是通过自然学校、民宿、风物销售等提高“自给自足率”。更重要的是，我们以高于市场价收购老村民的无农药农作物（如茶叶、山茶油），实现公平贸易闭环，利润反哺村集体，让资金在村内良性循环。" 
+                       data-en="Economically self-sufficient through our natural school and products. We buy pesticide-free crops (tea, camellia oil) from locals above market price, creating a fair trade loop that benefits the village collective.">
+                        在经济模型上，我们不以政府拨款或大企业投资为主要支撑，而是通过自然学校、民宿、风物销售等提高“自给自足率”。更重要的是，我们以高于市场价收购老村民的无农药农作物（如茶叶、山茶油），实现公平贸易闭环，利润反哺村集体，让资金在村内良性循环。
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 pt-4">
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                            <i class="fa-solid fa-scale-balanced text-2xl text-earth-500 mb-2"></i>
+                            <h4 class="font-bold text-gray-800" data-zh="公平贸易" data-en="Fair Trade">公平贸易</h4>
+                            <p class="text-sm text-gray-500 mt-1" data-zh="溢价收购老村民无农药作物" data-en="Premium buyout of organic crops">溢价收购老村民无农药作物</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                            <i class="fa-solid fa-network-wired text-2xl text-earth-500 mb-2"></i>
+                            <h4 class="font-bold text-gray-800" data-zh="青色组织" data-en="Teal Org">青色组织</h4>
+                            <p class="text-sm text-gray-500 mt-1" data-zh="无等级，强调在一起做自己" data-en="No hierarchy, be yourself together">无等级，强调在一起做自己</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:w-1/2">
+                    <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="" class="rounded-2xl shadow-xl w-full h-auto object-cover aspect-square md:aspect-video">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Academy/Education Section -->
+    <section id="academy" class="py-20 bg-eco-900 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <div class="inline-block px-4 py-1 bg-eco-800 text-eco-200 rounded-full text-sm font-bold tracking-wide mb-4" data-zh="教育与课程产品体系" data-en="Education System">教育与课程产品体系</div>
+                <h2 class="text-3xl md:text-4xl font-bold font-serif" data-zh="没有围墙的柯布生态书院" data-en="Cobb Eco-Academy: School Without Walls">没有围墙的柯布生态书院</h2>
+                <p class="mt-4 text-eco-100 max-w-3xl mx-auto" 
+                   data-zh="整个村落和山谷森林都是校园。这是一所没有文凭却有几十位海内外客座教授的学校，院士和村里的农民都是老师。我们实行“三生三好”体系（好好生活、好好学习、好好创造）。" 
+                   data-en="The village and forest are our campus. No diplomas, but dozens of visiting professors; academicians and farmers teach side by side. We emphasize 'living well, studying well, creating well'.">
+                    整个村落和山谷森林都是校园。这是一所没有文凭却有几十位海内外客座教授的学校，院士和村里的农民都是老师。我们实行“三生三好”体系（好好生活、好好学习、好好创造）。
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Course 1 -->
+                <div class="bg-eco-800 rounded-2xl p-8 border border-eco-700 hover:border-eco-400 transition-colors">
+                    <div class="w-12 h-12 bg-eco-600 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-book-open-reader text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2" data-zh="生态书院二年制班" data-en="2-Year Academy Program">生态书院二年制班</h3>
+                    <p class="text-eco-400 text-sm mb-4" data-zh="时长: 2年脱产" data-en="Duration: 2 Years Full-time">时长: 2年脱产</p>
+                    <p class="text-eco-100 mb-6 leading-relaxed text-sm" 
+                       data-zh="共食共住共事，晴耕雨读。深入学习生态文明与传统文化，培养年轻人真正回得去乡村。" 
+                       data-en="Eat, live, and work together. Deep study of eco-civilization and traditional culture to help youth return to the countryside.">
+                        共食共住共事，晴耕雨读。深入学习生态文明与传统文化，培养年轻人真正回得去乡村。
+                    </p>
+                    <div class="mt-auto inline-block bg-eco-900 px-3 py-1 rounded text-sm text-eco-300" data-zh="学费全免 (食宿1000元/月)" data-en="Tuition Free (Room/Board 1000 RMB/mo)">学费全免 (食宿1000元/月)</div>
+                </div>
+
+                <!-- Course 2 -->
+                <div class="bg-eco-800 rounded-2xl p-8 border border-eco-700 hover:border-eco-400 transition-colors relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-earth-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg" data-zh="国际认证" data-en="Certified">国际认证</div>
+                    <div class="w-12 h-12 bg-eco-600 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-compass-drafting text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2" data-zh="EDE 生态村设计教育" data-en="EDE: Ecovillage Design">EDE 生态村设计教育</h3>
+                    <p class="text-eco-400 text-sm mb-4" data-zh="时长: 28天密集型" data-en="Duration: 28 Days Intensive">时长: 28天密集型</p>
+                    <p class="text-eco-100 mb-6 leading-relaxed text-sm" 
+                       data-zh="基于联合国GEN框架下的整全设计教育，全面覆盖生态、经济、社群、文化四大维度，培养绿色领导力。" 
+                       data-en="Holistic design education under the UN GEN framework, covering ecology, economy, community, and culture.">
+                        基于联合国GEN框架下的整全设计教育，全面覆盖生态、经济、社群、文化四大维度，培养绿色领导力。
+                    </p>
+                    <div class="mt-auto inline-block bg-eco-900 px-3 py-1 rounded text-sm text-eco-300" data-zh="专业证书颁发" data-en="Professional Certificate">专业证书颁发</div>
+                </div>
+
+                <!-- Course 3 -->
+                <div class="bg-eco-800 rounded-2xl p-8 border border-eco-700 hover:border-eco-400 transition-colors">
+                    <div class="w-12 h-12 bg-eco-600 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fa-solid fa-campground text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2" data-zh="生态社群营" data-en="Eco-Community Camp">生态社群营</h3>
+                    <p class="text-eco-400 text-sm mb-4" data-zh="时长: 5天/期 (每月一期)" data-en="Duration: 5 Days (Monthly)">时长: 5天/期 (每月一期)</p>
+                    <p class="text-eco-100 mb-6 leading-relaxed text-sm" 
+                       data-zh="聚焦社群构建、后现代与生态文明、东方智慧、社群经济与全球生态村案例。小班制(≤20人)体验式学习。" 
+                       data-en="Focus on community building, eco-civilization, oriental wisdom, and global ecovillage cases. Small groups (≤20 people).">
+                        聚焦社群构建、后现代与生态文明、东方智慧、社群经济与全球生态村案例。小班制(≤20人)体验式学习。
+                    </p>
+                    <div class="mt-auto inline-block bg-eco-900 px-3 py-1 rounded text-sm text-eco-300" data-zh="短期高密体验" data-en="Short-term Immersive">短期高密体验</div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12 text-eco-300 text-sm" data-zh="* 我们还提供1-7天的自然学校研学、夏令营等长短结合的生命教育体验。" data-en="* We also offer 1-7 day natural school study tours and summer camps.">* 我们还提供1-7天的自然学校研学、夏令营等长短结合的生命教育体验。</div>
+        </div>
+    </section>
+
+    <!-- WWOOF Section -->
+    <section id="wwoof" class="py-20 bg-eco-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col-reverse lg:flex-row items-center gap-12">
+                <div class="lg:w-1/2 grid grid-cols-2 gap-4">
+                    <img src="https://images.unsplash.com/photo-1595841696650-6f0141b71457?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="" class="rounded-xl shadow-lg w-full h-48 object-cover mt-8">
+                    <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="" class="rounded-xl shadow-lg w-full h-48 object-cover">
+                    <img src="https://images.unsplash.com/photo-1590682680695-43b964a3ae17?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="" class="rounded-xl shadow-lg w-full h-48 object-cover col-span-2">
+                </div>
+                <div class="lg:w-1/2 space-y-6">
+                    <div class="inline-block px-4 py-1 bg-white text-eco-700 rounded-full text-sm font-bold tracking-wide shadow-sm" data-zh="志愿者招募" data-en="Volunteer Recruitment">志愿者招募</div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 font-serif" data-zh="WWOOF 义工与生活体验" data-en="WWOOF Volunteering & Experience">WWOOF 义工与生活体验</h2>
+                    <p class="text-gray-600 leading-relaxed text-lg" 
+                       data-zh="作为 WWOOF CHINA 认证主机农场（Host Code: 2081），三生谷全年欢迎热爱自然的义工加入。在这里没有阶层，只有家人。你可以参与生态农耕、茶园维护、工作坊协助等。" 
+                       data-en="As a certified WWOOF CHINA host (Code: 2081), we welcome volunteers year-round. No class hierarchy, only family. Join us in eco-farming, tea garden maintenance, and workshops.">
+                        作为 WWOOF CHINA 认证主机农场（Host Code: 2081），三生谷全年欢迎热爱自然的义工加入。在这里没有阶层，只有家人。你可以参与生态农耕、茶园维护、工作坊协助等。
+                    </p>
+                    
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-eco-200 mt-6">
+                        <h4 class="font-bold text-eco-800 mb-4 border-b pb-2" data-zh="农场基本信息" data-en="Farm Information">农场基本信息</h4>
+                        <ul class="space-y-3 text-gray-600 text-sm">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-location-dot w-6 mt-1 text-eco-500"></i> 
+                                <span data-zh="位置：浙江省建德市乾潭镇胥岭村" data-en="Location: Xuling Village, Qiantan, Jiande, Zhejiang">位置：浙江省建德市乾潭镇胥岭村</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-language w-6 mt-1 text-eco-500"></i> 
+                                <span data-zh="语言：中文、English" data-en="Languages: Chinese, English">语言：中文、English</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-leaf w-6 mt-1 text-eco-500"></i> 
+                                <span data-zh="饮食：提供纯素食，不食用肉类" data-en="Diet: Vegan/Vegetarian provided, no meat">饮食：提供纯素食，不食用肉类</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-seedling w-6 mt-1 text-eco-500"></i> 
+                                <span data-zh="类型：自然学校、永续农业、古村落活化" data-en="Type: Nature School, Permaculture, Village Revival">类型：自然学校、永续农业、古村落活化</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-users w-6 mt-1 text-eco-500"></i> 
+                                <span data-zh="容量：同时接纳 10 名 WWOOFer" data-en="Capacity: Up to 10 WWOOFers at a time">容量：同时接纳 10 名 WWOOFer</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="pt-4">
+                        <button class="px-8 py-3 bg-eco-600 text-white font-bold rounded-full hover:bg-eco-700 transition shadow-lg flex items-center gap-2">
+                            <i class="fa-solid fa-handshake-angle"></i> 
+                            <span data-zh="申请成为志愿者" data-en="Apply to Volunteer">申请成为志愿者</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / Contact -->
+    <footer id="contact" class="bg-eco-950 text-eco-200 py-16 border-t-[8px] border-eco-600">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <div class="md:col-span-1">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-eco-700 rounded-full flex items-center justify-center text-white">
+                            <i class="fa-solid fa-leaf text-xl"></i>
+                        </div>
+                        <span class="font-bold text-2xl text-white tracking-wider" data-zh="三生谷" data-en="Sunshine">三生谷</span>
+                    </div>
+                    <p class="text-sm leading-relaxed mb-6" 
+                       data-zh="回归共同体，连接现代城市与中国传统乡村文化，以全球化视野倡导人与自然和谐的整体世界观。" 
+                       data-en="Returning to the community, connecting modern cities with traditional Chinese rural culture, advocating a holistic worldview of harmony between humans and nature.">
+                        回归共同体，连接现代城市与中国传统乡村文化，以全球化视野倡导人与自然和谐的整体世界观。
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-8 h-8 rounded-full bg-eco-800 flex items-center justify-center hover:bg-eco-500 hover:text-white transition"><i class="fa-brands fa-weixin"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-eco-800 flex items-center justify-center hover:bg-eco-500 hover:text-white transition"><i class="fa-brands fa-weibo"></i></a>
+                    </div>
+                </div>
+                
+                <div class="md:col-span-1">
+                    <h4 class="text-white font-bold mb-6 uppercase tracking-wider" data-zh="快速导航" data-en="Quick Links">快速导航</h4>
+                    <ul class="space-y-3 text-sm">
+                        <li><a href="#about" class="hover:text-eco-400 transition" data-zh="关于三生谷" data-en="About Sunshine">关于三生谷</a></li>
+                        <li><a href="#philosophy" class="hover:text-eco-400 transition" data-zh="广义生态理念" data-en="Our Philosophy">广义生态理念</a></li>
+                        <li><a href="#community" class="hover:text-eco-400 transition" data-zh="社群经济" data-en="Community Economy">社群经济</a></li>
+                        <li><a href="#academy" class="hover:text-eco-400 transition" data-zh="教育与课程" data-en="Education Courses">教育与课程</a></li>
+                        <li><a href="#wwoof" class="hover:text-eco-400 transition" data-zh="WWOOF 义工" data-en="WWOOF Program">WWOOF 义工</a></li>
+                    </ul>
+                </div>
+
+                <div class="md:col-span-2">
+                    <h4 class="text-white font-bold mb-6 uppercase tracking-wider" data-zh="联系我们" data-en="Contact Us">联系我们</h4>
+                    <ul class="space-y-4 text-sm">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-location-dot mt-1 text-eco-500"></i>
+                            <span data-zh="浙江省杭州市建德市乾潭镇胥岭村<br><span class='text-xs text-eco-400'>距离杭州城区约1.5小时车程</span>" 
+                                  data-en="Xuling Village, Qiantan Town, Jiande City, Hangzhou, Zhejiang<br><span class='text-xs text-eco-400'>Approx. 1.5h drive from Hangzhou</span>">
+                                浙江省杭州市建德市乾潭镇胥岭村<br><span class="text-xs text-eco-400">距离杭州城区约1.5小时车程</span>
+                            </span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fa-solid fa-envelope text-eco-500"></i>
+                            <span>contact@sunshine-ecovillage.example.com</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fa-solid fa-seedling text-eco-500"></i>
+                            <span data-zh="杭州市三生谷生态农业科普中心 (社会企业)" data-en="Sunshine Ecovillage Agriculture Science Center (Social Enterprise)">杭州市三生谷生态农业科普中心 (社会企业)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-eco-800 mt-12 pt-8 flex flex-col lg:flex-row justify-between items-center gap-6">
+                <p class="text-sm text-eco-500">&copy; 2015-2026 三生谷生态村 Sunshine Ecovillage. All rights reserved.</p>
+                <div class="flex flex-wrap justify-center gap-3 text-xs text-eco-300">
+                    <span class="bg-eco-900 px-3 py-1 rounded-full border border-eco-800" data-zh="全球生态村联盟 (GEN) 成员" data-en="GEN Member">全球生态村联盟 (GEN) 成员</span>
+                    <span class="bg-eco-900 px-3 py-1 rounded-full border border-eco-800" data-zh="联合国教科文组织合作伙伴" data-en="UNESCO Partner">联合国教科文组织合作伙伴</span>
+                    <span class="bg-eco-900 px-3 py-1 rounded-full border border-eco-800" data-zh="中美后现代发展研究院联盟" data-en="IPDC Alliance">中美后现代发展研究院联盟</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Scripts -->
+    <script>
+        // Language Toggle Logic
+        let currentLang = 'zh';
+        
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'en';
+
+            // Change content
+            document.querySelectorAll('[data-zh]').forEach(el => {
+                // fade effect
+                el.style.opacity = '0';
+                setTimeout(() => {
+                    el.innerHTML = el.getAttribute(`data-${currentLang}`);
+                    el.style.opacity = '1';
+                }, 150);
+            });
+
+            // Update toggle buttons text
+            document.querySelectorAll('.lang-toggle-btn').forEach(btn => {
+                btn.innerText = currentLang === 'zh' ? 'EN' : '中文';
+            });
+        }
+
+        // Mobile Menu Toggle
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+
+        btn.addEventListener('click', () => {
+            menu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu on click
+        menu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+            });
+        });
+
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add('shadow-md');
+                navbar.classList.replace('bg-white/90', 'bg-white');
+            } else {
+                navbar.classList.remove('shadow-md');
+                navbar.classList.replace('bg-white', 'bg-white/90');
+            }
+        });
+
+        // Simple scroll animation observer
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in-up');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('section h2, section p, .grid > div').forEach(el => {
+            if(!el.hasAttribute('data-zh') || el.tagName !== 'P') { 
+                 el.style.opacity = '0';
+                 observer.observe(el);
+            }
+        });
+    </script>
+</body>
+</html>
